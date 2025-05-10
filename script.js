@@ -1,4 +1,4 @@
-let num1, num2, operator, result;
+let num1, num2, operator, result, i;
 
 function add() {
     result = num1 + num2;
@@ -23,6 +23,10 @@ function modulus() {
     result = num1 % num2;
 }
 modulus();
+function dot() {
+    result = num1 + "." + num2;
+}
+dot();
 
 function operate() {
     if(operator === "+") {
@@ -39,8 +43,37 @@ function operate() {
     }
     else if(operator === "%") {
         return modulus();
+    
+    }
+    else if(operator === ".") {
+        return dot();
     }
     else {
         console.log("Invalid operator");
     }
 }
+
+const input = document.getElementById("input");
+const buttons = document.querySelectorAll("button");
+
+buttons.forEach(button => {
+    button.addEventListener("click", () => {
+        const value = button.innerText;
+        input.value = input.value + value;
+
+        for(i = 0; i<10; i++) {
+            if(value === "=") {
+                const expression = input.value.slice(0, -1);
+                const parts = expression.split(/([+\-*/%])/);
+                num1 = parseFloat(parts[0]);
+                operator = parts[1];
+                num2 = parseFloat(parts[2]);
+
+                operate();
+                input.value = result;
+
+            }
+        }
+
+    });
+});
