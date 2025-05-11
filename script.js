@@ -1,6 +1,3 @@
-let num1, num2, operator, result, i;
-
-
 const input = document.getElementById("input");
 const buttons = document.querySelectorAll("button");
 
@@ -24,7 +21,6 @@ function calculate(a, op, b) {
 }
 
 function parseExpression(expression) {
-    // Tokenize the expression (numbers and operators)
     const tokens = expression.match(/(\d+\.?\d*)|([+\-*/%])/g) || [];
     
     const values = [];
@@ -67,18 +63,13 @@ buttons.forEach(button => {
             try {
                 const result = parseExpression(input.value);
                 input.value = result;
-                }catch(error) {
+                }
+                catch(error) {
                 console.error("Calculation error", error);
                 input.value = "Error";
             }
 
         }
-
-            if(value === "=") {
-                do {
-                }while(i<10);
-
-            }
         else {
             input.value = input.value + value;
         }
