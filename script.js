@@ -1,79 +1,86 @@
 let num1, num2, operator, result, i;
 
-function add() {
-    result = num1 + num2;
-}
-add();
-
-function subtract() {
-    result = num1 - num2;
-}
-subtract();
-
-function multiply() {
-    result = num1 * num2;
-}
-multiply();
-
-function divide() {
-    result = num1 / num2;
-}
-divide();
-function modulus() {
-    result = num1 % num2;
-}
-modulus();
-function dot() {
-    result = num1 + "." + num2;
-}
-dot();
-
-function operate() {
-    if(operator === "+") {
-        return add();
-    }
-    else if(operator === "-") {
-        return subtract();
-    }
-    else if(operator === "*") {
-        return multiply()
-    }
-    else if(operator === "/") {
-        return divide();
-    }
-    else if(operator === "%") {
-        return modulus();
-    
-    }
-    else if(operator === ".") {
-        return dot();
-    }
-    else {
-        console.log("Invalid operator");
-    }
-}
 
 const input = document.getElementById("input");
 const buttons = document.querySelectorAll("button");
 
+const precedence = {
+    '%': 3,
+    '*': 3,
+    '/': 3,
+    '+': 2,
+    '-': 2
+};
+
+function calculate(a, op, b) {
+    switch(op) {
+        case '+': return a + b;
+        case '-': return a - b;
+        case '*': return a * b;
+        case '/': return a / b;
+        case '%': return a % b;
+        default: throw new Error(`Unknown operator: ${op}`);
+    }
+}
+
+function parseExpression(expression) {
+    // Tokenize the expression (numbers and operators)
+    const tokens = expression.match(/(\d+\.?\d*)|([+\-*/%])/g) || [];
+    
+    const values = [];
+    const ops = [];
+    
+    tokens.forEach(token => {
+        if (!isNaN(token)) {
+            values.push(parseFloat(token));
+        } else {
+            while (ops.length > 0 && 
+                   precedence[ops[ops.length - 1]] >= precedence[token]) {
+                processOperation(values, ops);
+            }
+            ops.push(token);
+        }
+    });
+    
+    while (ops.length > 0) {
+        processOperation(values, ops);
+    }
+    
+    return values.pop();
+}
+
+function processOperation(values, ops) {
+    const b = values.pop();
+    const a = values.pop();
+    const op = ops.pop();
+    values.push(calculate(a, op, b));
+}
+
 buttons.forEach(button => {
     button.addEventListener("click", () => {
         const value = button.innerText;
-        input.value = input.value + value;
 
-        for(i = 0; i<10; i++) {
-            if(value === "=") {
-                const expression = input.value.slice(0, -1);
-                const parts = expression.split(/([+\-*/%])/);
-                num1 = parseFloat(parts[0]);
-                operator = parts[1];
-                num2 = parseFloat(parts[2]);
-
-                operate();
+        if(value === "AC") {
+            input.value = "";
+        }
+        else if(value === "=") {
+            try {
+                const result = parseExpression(input.value);
                 input.value = result;
-
+                }catch(error) {
+                console.error("Calculation error", error);
+                input.value = "Error";
             }
+
         }
 
+            if(value === "=") {
+                do {
+                }while(i<10);
+
+            }
+        else {
+            input.value = input.value + value;
+        }
     });
 });
